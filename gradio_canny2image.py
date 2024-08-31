@@ -22,6 +22,9 @@ def process(input_image, prompt, low_threshold, high_threshold):
     # flippy canny values, map all 0s to 1s and 1s to 0s
     canny_viz = 1 - (np.array(canny) / 255)
     canny_viz = Image.fromarray((canny_viz * 255).astype(np.uint8))
+    # Release GPU memory
+    torch.cuda.empty_cache()
+
     return canny_viz, output_pil
 
 
@@ -75,4 +78,4 @@ if __name__ == "__main__":
         )
 
     demo.queue()
-    demo.launch(debug=True, share=False)
+    demo.launch(debug=True, share=False, server_name="0.0.0.0", server_port=7861)

@@ -84,6 +84,10 @@ def run(image, prompt, prompt_template, style_name, seed, val_r):
     output_pil = F.to_pil_image(output_image[0].cpu() * 0.5 + 0.5)
     input_sketch_uri = pil_image_to_data_uri(Image.fromarray(255 - np.array(image)))
     output_image_uri = pil_image_to_data_uri(output_pil)
+
+    # Release GPU memory
+    torch.cuda.empty_cache()
+
     return (
         output_pil,
         gr.update(link=input_sketch_uri),
@@ -379,4 +383,5 @@ with gr.Blocks(css="style.css") as demo:
     image.change(run, inputs=inputs, outputs=outputs, queue=False, api_name=False)
 
 if __name__ == "__main__":
-    demo.queue().launch(debug=True, share=True)
+    demo.queue().launch(debug=True, share=True, server_name="0.0.0.0", server_port=7860)
+
